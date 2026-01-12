@@ -1,0 +1,16 @@
+name: noise_floor_p3
+notes: >
+  Can a smaller worker count fit inside this machine's core budget? At p=3 ring
+  runs 2(p-1)=4 steps to PS's 3, so H2's step-count asymmetry exists (ratio 1.33)
+  though far weaker than at p=8 (1.75). Only worth pursuing if the tail-noise
+  gate passes, which p=4 and p=8 both failed. Note recursive is excluded: it
+  requires a power-of-two world size.
+trials: 6
+warmup: 4
+iters: 250
+seed: 71
+algorithms: [ring, ps]
+world_sizes: [2, 3]
+bytes: [1048576, 4194304]
+alpha_ns: [200000]
+beta_ns_per_byte: [0.4]

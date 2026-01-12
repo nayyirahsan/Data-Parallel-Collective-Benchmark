@@ -1,0 +1,17 @@
+name: noise_floor_p3_deep
+notes: >
+  Deeper sampling at the single operating point that came closest to passing the
+  gate: p=3, 1 MB, beta=0.4. The tail ratio already passes (1.44x); what failed
+  was p99 stability across process launches (2.36x), which more trials will
+  either settle or confirm as real. Run on an idle machine -- background load
+  (in the first attempt, Docker Desktop's 12-CPU VM) inflates every one of these
+  numbers by 2-5x.
+trials: 10
+warmup: 5
+iters: 400
+seed: 89
+algorithms: [ring, ps]
+world_sizes: [3]
+bytes: [1048576]
+alpha_ns: [200000]
+beta_ns_per_byte: [0.4]

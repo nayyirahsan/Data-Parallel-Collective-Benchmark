@@ -1,0 +1,21 @@
+name: h2_p4
+notes: >
+  H2 measured at the one configuration this machine can support after the
+  core-yielding delay change: p=4, beta=0.4, which passes the noise-floor gate
+  on all six clean configurations. Ring runs 2(p-1)=6 steps to PS's p=4, a 1.5x
+  step-count asymmetry -- weaker than the 1.75x at p=8 that H2 was stated for,
+  but the mechanism genuinely exists here, unlike at p=2 where the step counts
+  are equal.
+trials: 8
+warmup: 4
+iters: 250
+seed: 113
+algorithms: [ring, recursive, ps]
+world_sizes: [4]
+bytes: [4096, 65536, 1048576]
+alpha_ns: [200000]
+beta_ns_per_byte: [0.4]
+jitter:
+  - {probability: 0.0,  multiplier: 1.0,  seed: 113}
+  - {probability: 0.01, multiplier: 10.0, seed: 113}
+  - {probability: 0.05, multiplier: 10.0, seed: 113}

@@ -1,0 +1,18 @@
+name: bandwidth_curve
+notes: >
+  Effective per-byte cost as a function of transfer size, measured with ring at
+  p=2 (2 steps, each carrying N/2) so step size is directly controlled. The
+  floor fit only reached 4 MB steps, where cost per byte was still falling with
+  size. Recursive halving moves its first step in one 22 MB block while ring
+  moves 5.6 MB chunks, so if the curve turns back up beyond the measured range
+  that would explain why recursive is slower despite moving identical bytes in
+  fewer steps.
+trials: 5
+warmup: 3
+iters: 20
+seed: 61
+algorithms: [ring]
+world_sizes: [2]
+bytes: [1048576, 4194304, 16777216, 33554432, 67108864, 134217728]
+alpha_ns: [0]
+beta_ns_per_byte: [0.0]

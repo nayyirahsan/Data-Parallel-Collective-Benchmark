@@ -1,0 +1,29 @@
+name: h2_latency
+notes: >
+  SUPERSEDED -- DO NOT RUN WITHOUT RE-CHECKING THE GATE.
+  This configuration does NOT pass the noise-floor gate: only 1 of 6 clean
+  p=8 configurations is usable even after the core-yielding delay change.
+  It was run once against a failed gate and its results were discarded.
+  Use experiments/h2_p4.yaml, which is gated. Kept as a record of what was
+  attempted and why it does not qualify.
+  ---
+
+  H2 in the pure-latency regime, now measurable at p=8. Making the delay shim
+  yield its core (sleep 70% of each delay, spin the tail) cut CPU occupancy from
+  99% to ~12% per worker, which removed the contention that previously made every
+  p>=4 configuration unusable for a tail statistic. beta=0 isolates exactly what
+  H2 is about -- step-count asymmetry, 2(p-1)=14 steps for ring against p=8 for
+  PS -- and is the regime the noise-floor gate passes at p=8.
+trials: 6
+warmup: 4
+iters: 200
+seed: 101
+algorithms: [ring, recursive, ps]
+world_sizes: [2, 4, 8]
+bytes: [4096, 65536, 1048576]
+alpha_ns: [200000]
+beta_ns_per_byte: [0.0]
+jitter:
+  - {probability: 0.0,  multiplier: 1.0,  seed: 101}
+  - {probability: 0.01, multiplier: 10.0, seed: 101}
+  - {probability: 0.05, multiplier: 10.0, seed: 101}

@@ -1,0 +1,15 @@
+name: floor
+notes: >
+  Software overhead floor. alpha = beta = 0, so every measured nanosecond is
+  Python dispatch, buffer management, and gloo substrate cost. This is the
+  alpha_sw term H1 claims the textbook alpha-beta model omits; fitting it here
+  independently is what makes the H1 comparison honest rather than circular.
+trials: 5
+warmup: 5
+iters: 40
+seed: 11
+algorithms: [ring, recursive, ps]
+world_sizes: [2, 4, 8]
+bytes: [4096, 65536, 1048576, 8388608]
+alpha_ns: [0]
+beta_ns_per_byte: [0.0]

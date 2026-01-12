@@ -1,0 +1,22 @@
+name: h2_jitter
+notes: >
+  H2: ring all-reduce is bandwidth-optimal but jitter-fragile. Ring runs 2(p-1)
+  serially dependent steps to PS's p, so per-step tail latency should compound
+  far more. Message sizes are chosen inside the regime where ring wins the clean
+  benchmark, so any reversal under jitter is a genuine flip and not a size
+  artefact. alpha is held at 200us: the calibration gate found the shim's own
+  p99 error reaches 33% at p=8 below that, which would confound injected tail
+  latency with scheduler noise.
+trials: 5
+warmup: 4
+iters: 150
+seed: 23
+algorithms: [ring, recursive, ps]
+world_sizes: [2, 4, 8]
+bytes: [1048576, 4194304]
+alpha_ns: [200000]
+beta_ns_per_byte: [0.4]
+jitter:
+  - {probability: 0.0,  multiplier: 1.0, seed: 23}
+  - {probability: 0.01, multiplier: 10.0, seed: 23}
+  - {probability: 0.05, multiplier: 10.0, seed: 23}

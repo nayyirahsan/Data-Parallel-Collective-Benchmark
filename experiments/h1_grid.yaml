@@ -1,0 +1,15 @@
+name: h1_grid
+notes: >
+  H1: does the alpha-beta model predict the ring/PS/recursive crossover? Sweeps
+  message size, worker count and injected latency, with and without a bandwidth
+  term. Compared against both the textbook model and the model corrected with
+  the independently fitted per-p software floor from experiments/floor.yaml.
+trials: 5
+warmup: 4
+iters: 25
+seed: 7
+algorithms: [ring, recursive, ps]
+world_sizes: [2, 4, 8]
+bytes: [4096, 65536, 1048576, 8388608]
+alpha_ns: [0, 50000, 200000, 1000000]
+beta_ns_per_byte: [0.0, 0.4]   # 0.4 ns/byte = 20 Gbit/s

@@ -1,0 +1,16 @@
+name: resnet_grad
+notes: >
+  Does the crossover finding apply to the real workload? Sweeps at exactly the
+  ResNet-18 flattened gradient size (44.7 MB), which is roughly 50x above every
+  crossover measured in the H1 grid, so ring and recursive should both be well
+  clear of the parameter server. beta=0.05 ns/byte approximates a fast
+  intra-node link; beta=0.4 a 20 Gbit/s network.
+trials: 3
+warmup: 2
+iters: 15
+seed: 47
+algorithms: [ring, recursive, ps]
+world_sizes: [2, 4, 8]
+bytes: [44726568]
+alpha_ns: [0, 200000]
+beta_ns_per_byte: [0.05, 0.4]

@@ -1,0 +1,82 @@
+{
+  "baseline_ns": 75052.25,
+  "shim_slope": 1.0144490999999998,
+  "shim_r2": 0.9999070041590249,
+  "netem_slope": 2.7860874000000004,
+  "netem_r2": 0.9474351792557685,
+  "delay_factor": 2.7464043292068583,
+  "shim_beta": {
+    "1000": 8.626428922017414,
+    "2000": 4.397121565682548
+  },
+  "netem_beta": {
+    "1000": 16.45372399829683,
+    "2000": 8.486978485470726
+  },
+  "rows": [
+    {
+      "mode": "shim",
+      "delay_us": 0,
+      "per_step_us": 76.1665
+    },
+    {
+      "mode": "shim",
+      "delay_us": 250,
+      "per_step_us": 321.2915
+    },
+    {
+      "mode": "shim",
+      "delay_us": 500,
+      "per_step_us": 576.0105
+    },
+    {
+      "mode": "shim",
+      "delay_us": 1000,
+      "per_step_us": 1100.5415
+    },
+    {
+      "mode": "shim",
+      "delay_us": 2000,
+      "per_step_us": 2098.2085
+    },
+    {
+      "mode": "netem",
+      "delay_us": 0,
+      "per_step_us": 74.36475
+    },
+    {
+      "mode": "netem",
+      "delay_us": 250,
+      "per_step_us": 1993.82275
+    },
+    {
+      "mode": "netem",
+      "delay_us": 500,
+      "per_step_us": 1997.59375
+    },
+    {
+      "mode": "netem",
+      "delay_us": 1000,
+      "per_step_us": 3992.59375
+    },
+    {
+      "mode": "netem",
+      "delay_us": 2000,
+      "per_step_us": 6015.32275
+    },
+    {
+      "mode": "bandwidth",
+      "rate_mbit": 1000,
+      "nominal_beta": 8.0,
+      "shim_beta": 8.626428922017414,
+      "netem_beta": 16.45372399829683
+    },
+    {
+      "mode": "bandwidth",
+      "rate_mbit": 2000,
+      "nominal_beta": 4.0,
+      "shim_beta": 4.397121565682548,
+      "netem_beta": 8.486978485470726
+    }
+  ]
+}

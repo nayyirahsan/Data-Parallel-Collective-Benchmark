@@ -1,0 +1,18 @@
+name: noise_floor
+notes: >
+  Tail-noise floor of the apparatus itself. Clean runs only (no injected
+  jitter): measures the natural p99/p50 ratio across worker count, message size
+  and bandwidth term. Any H2 claim about injected tail latency is only
+  meaningful where this ratio is small, so this run defines the usable region.
+  The original calibration gate validated the delay shim under spin contention
+  with no payload; this extends it to realistic payloads, where memory-bandwidth
+  contention between co-located processes turns out to dominate.
+trials: 5
+warmup: 4
+iters: 200
+seed: 31
+algorithms: [ring, ps]
+world_sizes: [2, 4, 8]
+bytes: [4096, 65536, 1048576]
+alpha_ns: [200000]
+beta_ns_per_byte: [0.0, 0.4]

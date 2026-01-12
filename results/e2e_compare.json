@@ -1,0 +1,40 @@
+{
+  "args": {
+    "workers": 4,
+    "steps": 15,
+    "batch_size": 128,
+    "lr": 0.01,
+    "alpha_ns": 200000.0,
+    "beta": 0.4,
+    "norm": "gn",
+    "synthetic": false,
+    "trials": 2,
+    "out": "results/e2e_compare.json"
+  },
+  "summary": {
+    "ring": {
+      "step_ms": 257.6376931333333,
+      "compute_ms": 158.75219583333333,
+      "allreduce_ms": 80.22077223333334,
+      "pack_ms": 11.308432033333332,
+      "transfer_ms": 7.356293033333333,
+      "comm_share": 0.383816110513086
+    },
+    "ps": {
+      "step_ms": 271.26654856666664,
+      "compute_ms": 153.71215143333333,
+      "allreduce_ms": 100.25843193333334,
+      "pack_ms": 11.141242966666667,
+      "transfer_ms": 6.154722233333333,
+      "comm_share": 0.4333538276447053
+    },
+    "recursive": {
+      "step_ms": 258.3800013,
+      "compute_ms": 159.89979849999997,
+      "allreduce_ms": 81.12875423333334,
+      "pack_ms": 10.288430533333333,
+      "transfer_ms": 7.063018033333334,
+      "comm_share": 0.3811448343699656
+    }
+  }
+}

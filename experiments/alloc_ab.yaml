@@ -1,0 +1,15 @@
+name: alloc_ab
+notes: >
+  A/B test of one preallocated receive buffer vs a fresh allocation per step in
+  recursive halving/doubling. Both variants run inside the same sweep, in
+  shuffled order, across the same cold launches -- the first comparison was made
+  across two separate runs, where machine drift exceeds the effect size.
+trials: 8
+warmup: 3
+iters: 20
+seed: 53
+algorithms: [recursive, recursive_fresh]
+world_sizes: [4, 8]
+bytes: [44695848]
+alpha_ns: [0]
+beta_ns_per_byte: [0.05, 0.4]
