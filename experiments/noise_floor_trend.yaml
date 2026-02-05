@@ -1,0 +1,16 @@
+name: noise_floor_trend
+notes: >
+  Can this machine measure a trend in p? H2 claims ring's jitter sensitivity
+  grows with worker count, so measuring ring/PS across several p values tests the
+  scaling claim directly -- and does not require reaching p=8. Checks whether
+  p=5 and p=6 join p=2 and p=4 inside the gate at beta=0.4. recursive is omitted
+  because it requires a power-of-two world size.
+trials: 6
+warmup: 4
+iters: 200
+seed: 127
+algorithms: [ring, ps]
+world_sizes: [2, 4, 5, 6]
+bytes: [65536, 1048576]
+alpha_ns: [200000]
+beta_ns_per_byte: [0.4]

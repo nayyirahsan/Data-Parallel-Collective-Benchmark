@@ -278,8 +278,72 @@ def figure_bandwidth_curve() -> None:
     _save(fig, "bandwidth_curve.png")
 
 
+def figure_h2_measured() -> None:
+    """The gated p=4 measurement against H2's prediction and the simulator."""
+    path = RESULTS / "h2_p4_critpath.csv"
+    if not path.exists():
+        return
+    from .jitter_impact import analyse as jitter_analyse
+
+    results = [r for r in jitter_analyse(path) if r.jitter_q == 0.01]
+    if not results:
+        return
+    idx = {(r.algo, r.nbytes): r for r in results}
+    sizes = sorted({r.nbytes for r in results})
+    labels = [f"{n // 1024} KB" for n in sizes]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.3))
+
+    # Left: how much each algorithm degrades.
+    width = 0.26
+    x = np.arange(len(sizes))
+    peak = 0.0
+    for i, algo in enumerate(("ring", "ps", "recursive")):
+        vals = [idx[(algo, n)].p99_ratio if (algo, n) in idx else np.nan for n in sizes]
+        peak = max(peak, np.nanmax(vals))
+        ax1.bar(x + (i - 1) * width, vals, width,
+                color=ALGO_COLOURS[algo], label=ALGO_LABELS[algo])
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(labels)
+    ax1.set_ylim(0, peak * 1.45)  # headroom so the legend never covers a bar
+    ax1.set_ylabel("p99 degradation vs clean")
+    ax1.set_xlabel("message size")
+    ax1.set_title("All three degrade alike under identical jitter")
+    ax1.grid(alpha=0.3, axis="y")
+    ax1.legend(fontsize=8, loc="upper right")
+
+    # Right: the ratio H2 is actually a claim about.
+    ratios = [
+        idx[("ring", n)].p99_ratio / idx[("ps", n)].p99_ratio
+        for n in sizes
+    ]
+    ax2.bar(x, ratios, 0.5, color="#1f77b4", label="measured ring / PS")
+    ax2.axhline(4.0, color="#d62728", ls="--", lw=1.6,
+                label="H2 predicted $\\geq$ 4x")
+    ax2.axhline(1.23, color="#2ca02c", ls=":", lw=1.6, label="simulator, p=4")
+    ax2.axhline(1.0, color="k", lw=0.8, alpha=0.4)
+    for xi, r in zip(x, ratios):
+        ax2.text(xi, r + 0.12, f"{r:.2f}x", ha="center", fontsize=9)
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(labels)
+    ax2.set_ylim(0, 4.8)
+    ax2.set_ylabel("ring / PS degradation")
+    ax2.set_xlabel("message size")
+    ax2.set_title("The ratio H2 predicted would be $\\geq$ 4x and grow with p")
+    ax2.grid(alpha=0.3, axis="y")
+    ax2.legend(fontsize=8, loc="upper right")
+
+    fig.suptitle(
+        "H2 refuted: gated measurement at p=4, 1% x10 jitter, "
+        f"ring/PS = {min(ratios):.2f}-{max(ratios):.2f}x",
+        fontsize=11,
+    )
+    _save(fig, "h2_measured_p4.png")
+
+
 def main() -> None:
     print("generating figures:")
+    figure_h2_measured()
     figure_e2e_breakdown()
     figure_bandwidth_curve()
     figure_floor()

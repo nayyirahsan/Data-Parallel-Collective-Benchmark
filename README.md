@@ -86,6 +86,19 @@ wins at p ≥ 4 when β=0.05** (a fast intra-node link), by up to 1.31×. When
 bandwidth is plentiful the per-step software floor dominates and PS's p steps
 beat ring's 2(p−1). → [`docs/findings-workload.md`](docs/findings-workload.md)
 
+## Figures
+
+| | |
+|---|---|
+| ![H2 measured at p=4](figures/h2_measured_p4.png) | ![H1 model error](figures/h1_model_error.png) |
+| **H2 refuted** by a gated measurement: ring/PS = 1.15–1.25× against a predicted ≥4×. | **H1**: the α-β model's error is governed by α/α_sw, reaching 1.00× once network latency dominates. |
+| ![Step attribution](figures/e2e_breakdown.png) | ![Crossover surface](figures/crossover_surface.png) |
+| Gradient staging cost more than the collective until 62 device transfers were fused into one. | Measured vs predicted crossover: the textbook model diverges at low α and converges at high α. |
+
+Others in [`figures/`](figures/): the software-overhead floor, the apparatus
+noise floor, the simulated degradation curve, and the bandwidth plateau that
+refuted one explanation for recursive halving/doubling's slowness.
+
 ## What is actually built
 
 | | |
