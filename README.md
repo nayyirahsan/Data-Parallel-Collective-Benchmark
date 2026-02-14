@@ -86,6 +86,23 @@ wins at p ≥ 4 when β=0.05** (a fast intra-node link), by up to 1.31×. When
 bandwidth is plentiful the per-step software floor dominates and PS's p steps
 beat ring's 2(p−1). → [`docs/findings-workload.md`](docs/findings-workload.md)
 
+## Things I got wrong, and what caught them
+
+Each of these changed a number I had already written down. They are logged with
+the measurement that killed them in [`docs/decisions.md`](docs/decisions.md).
+
+| What I believed | What killed it |
+|---|---|
+| The parameter server costs `2α`, as the textbook quotes it. | A smoke test came out 4.5× off. Under a shared uplink the server pays α per outbound copy, so it is `p·α`. Left in, it would have manufactured a 2× "model error" attributed to H1 that had nothing to do with H1. |
+| Recursive halving/doubling is slower because it allocates a 22 MB buffer per step. | An interleaved, trial-paired A/B found **no difference at any configuration**. The 10–30% "regression" I first measured was machine drift between two separate runs. |
+| Then: it is slower because 22 MB blocks blow the cache. | Measured directly — effective bandwidth **plateaus** at 0.19 ns/byte from 2 MB to 64 MB, no turnaround. Refuted. The gap is still unexplained and is logged as open, not attributed to a third guess. |
+| `time.sleep` is unusable for delay injection, so the shim must spin. | Right about `sleep`, wrong about the remedy. The overshoot is *proportional*, not absolute, so sleeping a **fraction** of each delay is safe: same accuracy at 12% CPU instead of 99%. That took usable configurations from 5/36 to 19/36 and turned H2 from a model prediction into a measurement. |
+| A p=3 configuration was too noisy to measure (7.23×). | Docker Desktop was running a 12-CPU VM in the background. Idle, the same configuration measured **1.44×** — a 5× difference from background load. Caught only because a previously-measured point had drifted. |
+
+The apparatus is now gated: configurations the calibration and noise-floor
+experiments ruled out raise at load time rather than producing a plausible
+number. Two of the corrections above would have been silent without it.
+
 ## Figures
 
 | | |
