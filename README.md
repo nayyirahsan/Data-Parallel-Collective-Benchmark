@@ -9,7 +9,7 @@ The project tests two falsifiable hypotheses about when each strategy wins.
 **One is refuted at the margin, one is refuted outright**, and the write-ups
 below treat that as the result rather than something to bury.
 
-## The two findings
+## Findings
 
 ### 1. The α-β model's error is governed by α/α_sw — not a constant
 
