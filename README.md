@@ -6,8 +6,10 @@ network's latency (α) and inverse bandwidth (β) are **controlled variables**
 rather than whatever the loopback interface happens to provide.
 
 The project tests two falsifiable hypotheses about when each strategy wins.
-**One is refuted at the margin, one is refuted outright**, and the write-ups
-below treat that as the result rather than something to bury.
+**One is refuted at the margin, one is refuted outright** — findings 1 and 2
+below. Findings 3 and 4 came out of building the apparatus to test them, and
+finding 3 turned out to be the most useful of the four. The write-ups treat the
+refutations as the result rather than something to bury.
 
 ## Findings
 
@@ -132,13 +134,17 @@ refuted one explanation for recursive halving/doubling's slowness.
 The parts that took the most care, and the reasoning behind each, are logged in
 [`docs/decisions.md`](docs/decisions.md). The load-bearing ones:
 
-- **Spin-wait, not `sleep`.** `time.sleep` on macOS overshoots by a consistent
-  +20–30% at *every* scale from 1 µs to 10 ms — a proportional bias, not a
-  granularity floor, so it cannot be corrected by an offset. Pure spin holds
-  ≤0.4% median error. The hybrid strategy originally planned turned out worse
-  than pure spin above 1 ms (+17.7% at 5 ms).
-- **p ≤ 8 is empirical.** At p=12 (spinners = cores) the scheduler starves and
-  p99 error reaches +112%. → [`docs/calibration.md`](docs/calibration.md)
+- **Delay injection sleeps a fraction, then spins.** `time.sleep` overshoots by
+  a consistent +20–30% at *every* scale — a proportional bias, not a granularity
+  floor — so a *fixed* slack fails at large delays (+17.7% at 5 ms). Sleeping a
+  *fraction* of each delay is safe at every scale (0.7 × 1.35 < 1) and holds the
+  same ≤0.4% median error as pure spinning at 11–15% CPU instead of 99%.
+  Granularity is measured at runtime and the sleep leg is skipped where the
+  platform cannot deliver it — ~5 µs on macOS but ~1 ms inside a VM, where a
+  140 µs sleep would overrun its deadline fivefold.
+- **Worker count is capped empirically, not assumed.** At p=12 (spinners =
+  cores) the scheduler starves and p99 error reaches +112%.
+  → [`docs/calibration.md`](docs/calibration.md)
 - **The shim is validated against a real shaped link.** On Linux with `tc netem`,
   the shim is linear in configured α with **slope 1.004, R² = 1.0000**; netem is
   linear at slope 2.090. The ~2× gap appears independently in bandwidth
@@ -167,7 +173,7 @@ The parts that took the most care, and the reasoning behind each, are logged in
 ## Correctness
 
 ```bash
-pytest tests/          # 91 tests
+pytest tests/          # 102 tests
 ```
 
 - Every collective matches gloo's `all_reduce` to 1e-9 at p ∈ {2,4,8}, including
@@ -209,8 +215,10 @@ rank); every figure and every number in `docs/` is generated from those files.
 - Workers are processes on one machine, so the software floor includes
   contention a real cluster would not have. It is absorbed per-p rather than
   left in the comparison, but it caps what can be claimed at p ≥ 4.
-- Everything about H2 at p ≥ 4 rests on a model validated only at p=2. A real
-  multi-node cluster is the single change that would most improve this result.
+- H2 is measured at p=4 and modelled beyond it. The discrete-event model is
+  validated against measurement at p=2 and p=4; its p=8 and p=64 predictions are
+  extrapolation. H2 was stated at p=8, so settling it as written still needs a
+  machine that passes the gate there.
 - The two-point jitter model quantises simulated p99 onto discrete levels; a
   continuous heavy-tailed distribution would smooth it.
 - The shim is validated against `tc netem` at 4–32 ms and against wall clock at
@@ -219,13 +227,13 @@ rank); every figure and every number in `docs/` is generated from those files.
   is below its usable resolution. The claim rests on the shim's measured
   linearity (R² = 0.9999) rather than a direct comparison at 50 µs; confirming it
   would need bare-metal Linux with a high-resolution timer.
-- Settling H2 needs more cores, not a cluster — the blocker is spin-wait
-  contention, not network realism. Three cheaper local routes were tried and all
-  refuted: sleeping instead of spinning (Linux quantizes to ~1 ms, worse than
-  macOS), and smaller worker counts (p=3 fails on launch-to-launch p99
-  stability even at 10 trials × 400 iterations). `./scripts/settle_h2.sh 8` on a
-  32-vCPU machine (a few dollars) runs it behind a gate that refuses to proceed
-  if the apparatus still cannot support the measurement.
+- Reaching p=8 needs more cores, not a cluster — the blocker is spin-wait
+  contention, not network realism. Four cheaper local routes were tried. One
+  worked (fractional sleep, which bought p=4); the rest were refuted: replacing
+  spinning outright (VMs quantize sleep to ~1 ms, worse than macOS) and smaller
+  worker counts (p=3 fails on launch-to-launch p99 stability even at 10 trials ×
+  400 iterations). `./scripts/settle_h2.sh 8` on a 32-vCPU machine runs it behind
+  a gate that refuses to proceed if the apparatus still cannot support it.
   → [`docs/scaling-up.md`](docs/scaling-up.md),
   [`docs/codespaces.md`](docs/codespaces.md)
 
