@@ -195,7 +195,7 @@ python -m dpt.bench.calibrate                              # timer fidelity gate
 python -m dpt.bench.sweep --config experiments/floor.yaml  # software floor
 python -m dpt.bench.sweep --config experiments/h1_grid.yaml
 python -m dpt.bench.sweep --config experiments/noise_floor.yaml
-python -m dpt.bench.sweep --config experiments/h2_jitter.yaml
+python -m dpt.bench.sweep --config experiments/h2_p4.yaml    # gated H2
 
 python -m dpt.analysis.fit          # floor + contention decomposition
 python -m dpt.analysis.crossover    # H1: measured vs predicted

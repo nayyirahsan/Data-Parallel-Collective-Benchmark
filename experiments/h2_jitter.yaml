@@ -1,5 +1,12 @@
 name: h2_jitter
 notes: >
+  SUPERSEDED -- DOES NOT PASS THE NOISE-FLOOR GATE AT p=8.
+  Its p=8 configurations fail (5/6 too noisy for a tail statistic), so its
+  numbers measure apparatus contention as much as injected jitter and are not
+  cited as evidence anywhere. Use experiments/h2_p4.yaml, which is gated.
+  Kept because its p=2 rows are clean and are used to validate the
+  discrete-event model, and as a record of what was attempted.
+  ---
   H2: ring all-reduce is bandwidth-optimal but jitter-fragile. Ring runs 2(p-1)
   serially dependent steps to PS's p, so per-step tail latency should compound
   far more. Message sizes are chosen inside the regime where ring wins the clean
